@@ -44,7 +44,7 @@ class MainWindow (wx.Frame):
         menu2.Append (wx.NewId(), u"Бла-бла-бла 2")
         menu2.Append (wx.NewId(), u"Бла-бла-бла 3")
         menu2.Append (wx.NewId(), u"Бла-бла-бла 4")
-        self.menubar.Append (menu2, u"Пункт меню 2")
+        self.menubar.Append (menu2, u"&Пункт меню 2")
 
         menu3 = wx.Menu()
         menu3.Append (wx.NewId(), u"Бла-бла-бла 1")

@@ -7,7 +7,7 @@ import wx
 class SmartMenuBar (wx.MenuBar):
     """Меню с автоматической расстановкой подчеркиваний"""
     def __init__(self, style=0):
-        super(SmartMenuBar , self).__init__(style)
+        super(SmartMenuBar, self).__init__(style)
 
 
     def assignShortcuts (self):
@@ -20,16 +20,6 @@ class SmartMenuBar (wx.MenuBar):
         # Проверить сокращения для заголовков меню первого уровня
         self._assignMenuShortcuts (self)
 
-        menus = self.GetMenus()
-        newmenus = [(menu, menu.GetTitle().replace (u"_", u"&")) for menu, _ in menus]
-        self.SetMenus (newmenus)
-        self.UpdateMenus()
-
-
-    def Append (self, menu, title):
-        menu.SetTitle (title)
-        wx.MenuBar.Append (self, menu, title)
-
 
     def _getExistingShortcuts (self, menu):
         """
@@ -41,8 +31,10 @@ class SmartMenuBar (wx.MenuBar):
         # Значение - название пункта меню.
         shortcuts = {}
 
-        for menuitem in self._getMenuItems (menu):
-            title = self._getText (menuitem)
+        menuitems = self._getMenuItems (menu)
+
+        for menuitem, position in zip (menuitems, range (len (menuitems))):
+            title = self._getText (menuitem, position)
             shortcut = self._extractShortcut (title)
 
             if shortcut in shortcuts:
@@ -66,8 +58,9 @@ class SmartMenuBar (wx.MenuBar):
         menuitems = self._getMenuItems (menu)
 
         for menuitem, position in zip (menuitems, range (len (menuitems))):
-            title = self._getText (menuitem)
+            title = self._getText (menuitem, position)
             shortcut = self._extractShortcut (title)
+            # print title
 
             if len (shortcut) == 0:
                 newtitle, newshortcut = self._findNewShortcut (title, shortcuts)
@@ -83,9 +76,8 @@ class SmartMenuBar (wx.MenuBar):
     def _getSubMenu (self, menuitem):
         if isinstance (menuitem, wx.MenuItem):
             return menuitem.GetSubMenu()
-
-        assert isinstance (menuitem, wx.Menu)
-        return menuitem
+        elif isinstance (menuitem, wx.Menu):
+            return menuitem
 
 
     def _getMenuItems (self, menu):
@@ -94,20 +86,19 @@ class SmartMenuBar (wx.MenuBar):
         """
         if isinstance (menu, wx.Menu):
             return menu.GetMenuItems()
+        elif isinstance (menu, wx.MenuBar):
+            return [menu for menu, title in menu.GetMenus()]
 
-        assert isinstance (menu, wx.MenuBar)
-        return [menu for menu, title in menu.GetMenus()]
 
-
-    def _getText (self, menuitem):
+    def _getText (self, menuitem, position):
         """
         Получить заголовок меню (или элемента меню) в зависимости от типа menuitem
         """
         if isinstance (menuitem, wx.MenuItem):
             return menuitem.GetItemLabel()
-
-        assert isinstance (menuitem, wx.Menu)
-        return menuitem.GetTitle()
+        elif isinstance (menuitem, wx.Menu):
+            menubar = menuitem.GetMenuBar()
+            return menubar.GetMenuLabel (position)
 
 
     def _setText (self, menuitem, title, position):
@@ -121,9 +112,9 @@ class SmartMenuBar (wx.MenuBar):
             menu = menuitem.GetMenu()
             menu.RemoveItem (menuitem)
             menu.InsertItem (position, menuitem)
-        else:
-            assert isinstance (menuitem, wx.Menu)
-            menuitem.SetTitle (title)
+        elif isinstance (menuitem, wx.Menu):
+            menubar = menuitem.GetMenuBar()
+            menubar.SetMenuLabel (position, title)
 
 
     def _findNewShortcut (self, title, shortcuts):
