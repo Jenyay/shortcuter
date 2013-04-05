@@ -26,7 +26,6 @@ class MainWindow (wx.Frame):
             print repr (e)
 
         self.menubar.UpdateMenus()
-        self.Update()
 
 
     def _createMenu (self):
@@ -34,9 +33,10 @@ class MainWindow (wx.Frame):
 
         menu1 = wx.Menu()
         menu1.Append (wx.NewId(), u"&Бла-бла-бла 1\tCtrl+O")
-        menu1.Append (wx.NewId(), u"Бла-бла-бла 2")
+        menu1.Append (wx.NewId(), u"Bla-bla-bla 2\tCtrl+P")
         menu1.Append (wx.NewId(), u"Бла-бла-бла 3")
-        menu1.Append (wx.NewId(), u"Бла-бла-бла 4")
+        menu1.Append (wx.NewId(), u"Б&ла-бла-бла 4")
+        menu1.Append (wx.NewId(), u"Бла-бла-бла 5")
         self.menubar.Append (menu1, u"Пункт меню 1")
 
         menu2 = wx.Menu()
