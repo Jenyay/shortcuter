@@ -38,7 +38,7 @@ class SmartMenuBar (wx.MenuBar):
             shortcut = self._extractShortcut (title)
 
             if shortcut in shortcuts:
-                raise ValueError (u'Совпадение клавиатурных сокращений у пунктов меню "{0}" и {1}'.format (shortcuts[shortcut], title))
+                raise ValueError (u'Dublicate menu labels: "{0}" and "{1}"'.format (shortcuts[shortcut], title))
 
             if len (shortcut) != 0:
                 shortcuts[shortcut] = title
