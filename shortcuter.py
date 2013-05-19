@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
+"""
+Версия 1.0
+"""
 
 import wx
 

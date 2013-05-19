@@ -1,4 +1,20 @@
-smartmenubar
+Shortcuter
 ============
 
-MenuBar for wxPython with automatic arrangement shortcuts
+Класс для автоматической расстановки шорткатов (букв с подчеркиванием) в меню для wxPython.
+
+С помощью этого же класса можно проверять меню на наличие повторяющихся шорткатов.
+
+
+Файлы
+-----
+
+shortcuter.py - модуль с классом Shortcuter
+runexample.py - пример приложения, использующего Shortcuter
+
+Дела копирайтные
+----------------
+
+(c) Евгений Ильин (http://jenyay.net)
+
+Лицензия: GPL 3.
