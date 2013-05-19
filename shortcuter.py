@@ -4,10 +4,10 @@
 import wx
 
 
-class SmartMenuBar (wx.MenuBar):
+class Shortcuter (object):
     """Меню с автоматической расстановкой подчеркиваний"""
-    def __init__(self, style=0):
-        super(SmartMenuBar, self).__init__(style)
+    def __init__(self, menubar):
+        self._menubar = menubar
 
 
     def assignShortcuts (self):
@@ -16,8 +16,8 @@ class SmartMenuBar (wx.MenuBar):
         Метод проходится по всем меню и расставляет подчеркивания там, где их еще нет. Заодно проверяет, чтобы у двух разных пунктов меню не было одних и тех же клавиатурных сокращений
         """
         # Проверить сокращения для заголовков меню первого уровня
-        self._assignMenuShortcuts (self)
-        self.UpdateMenus()
+        self._assignMenuShortcuts (self._menubar)
+        self._menubar.UpdateMenus()
 
 
     def checkDublicates (self):
@@ -26,7 +26,7 @@ class SmartMenuBar (wx.MenuBar):
         """
         dublicates = []
 
-        self._checkDublicates (self, dublicates)
+        self._checkDublicates (self._menubar, dublicates)
         return dublicates
 
 

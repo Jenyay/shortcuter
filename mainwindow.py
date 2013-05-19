@@ -3,7 +3,7 @@
 
 import wx
 
-from smartmenubar.smartmenubar import SmartMenuBar
+from shortcuter import Shortcuter
 
 
 class MainWindow (wx.Frame):
@@ -27,11 +27,11 @@ class MainWindow (wx.Frame):
         self.Layout()
 
         # !!! Добавление шорткатов, которые не были расставлены вручную
-        self.menubar.assignShortcuts()
+        Shortcuter (self.menubar).assignShortcuts()
 
 
     def _createMenu (self):
-        self.menubar = SmartMenuBar()
+        self.menubar = wx.MenuBar()
 
         menu1 = wx.Menu()
         menu1.Append (wx.NewId(), u"&Бла-бла-бла 1\tCtrl+O")
@@ -86,7 +86,7 @@ class MainWindow (wx.Frame):
 
 
     def _onCheckDublicate (self, event):
-        dublicates = self.menubar.checkDublicates()
+        dublicates = Shortcuter (self.menubar).checkDublicates()
 
         if len (dublicates) == 0:
             message = u"Повторяющихся шорткатов не обнаружено"
