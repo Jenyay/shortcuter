@@ -14,18 +14,39 @@ class SmartMenuBar (wx.MenuBar):
         """
         Расставить клашишные сокращения (подчеркнутые буквы) для доступа к меню (с использованием комбинаций, Alt+...)
         Метод проходится по всем меню и расставляет подчеркивания там, где их еще нет. Заодно проверяет, чтобы у двух разных пунктов меню не было одних и тех же клавиатурных сокращений
-
-        Метод бросает исключение ValueError, если находит совпадение двух клавишных сокращений
         """
         # Проверить сокращения для заголовков меню первого уровня
         self._assignMenuShortcuts (self)
+        self.UpdateMenus()
 
 
-    def _getExistingShortcuts (self, menu):
+    def checkDublicates (self):
+        """
+        Проверить шорткаты на повторы. Возвращает список заголовков с дублирующимися шорткатами
+        """
+        dublicates = []
+
+        self._checkDublicates (self, dublicates)
+        return dublicates
+
+
+    def _checkDublicates (self, menu, dublicatesList):
+        self._getExistingShortcuts (menu, lambda shortcut, title: dublicatesList.append (title))
+
+        menuitems = self._getMenuItems (menu)
+
+        for menuitem, position in zip (menuitems, range (len (menuitems))):
+            submenu = self._getSubMenu (menuitem)
+            if submenu != None:
+                self._checkDublicates (submenu, dublicatesList)
+
+
+    def _getExistingShortcuts (self, menu, dublicateFunc):
         """
         Возвращает список уже присвоенных шорткатов.
-        Метод бросает исключение ValueError, если находит совпадение двух клавишных сокращений.
         Возвращает словарь шорткатов
+        menu - меню, из которого нужно извлечь шорткаты
+        dublicateFunc - функция, которая вызывается в случае обнаружения повторяющихся шорткатов. Функция принимает два аргумента: строку с буквой-шорткатом и заголовок пункта меню, к которому этот шорткат относится.
         """
         # Ключ - буква, клавиатурного сокращения (подчеркнутая буква, буква перед которой стоит &)
         # Значение - название пункта меню.
@@ -38,7 +59,7 @@ class SmartMenuBar (wx.MenuBar):
             shortcut = self._extractShortcut (title)
 
             if shortcut in shortcuts:
-                raise ValueError (u'Dublicate menu labels: "{0}" and "{1}"'.format (shortcuts[shortcut], title))
+                dublicateFunc (shortcuts[shortcut], title)
 
             if len (shortcut) != 0:
                 shortcuts[shortcut] = title
@@ -49,11 +70,16 @@ class SmartMenuBar (wx.MenuBar):
     def _assignMenuShortcuts (self, menu):
         """
         Проверить и применить клавишные сокращения для одного меню
-        Метод бросает исключение ValueError, если находит совпадение двух клавишных сокращений
         """
+        def noneDublicateFunc (shortcut, title):
+            """
+            Функция, используемая в случае, если при обнаружении повторения шортката делать ничего не надо
+            """
+            pass
+
         # Ключ - буква, клавиатурного сокращения (подчеркнутая буква, буква перед которой стоит &)
         # Значение - название пункта меню.
-        shortcuts = self._getExistingShortcuts (menu)
+        shortcuts = self._getExistingShortcuts (menu, noneDublicateFunc)
 
         menuitems = self._getMenuItems (menu)
 
