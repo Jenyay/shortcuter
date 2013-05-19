@@ -5,15 +5,15 @@ import wx
 
 
 class Shortcuter (object):
-    """Меню с автоматической расстановкой подчеркиваний"""
+    """Класс для расстановки шорткатов в меню для wxPython"""
     def __init__(self, menubar):
         self._menubar = menubar
 
 
     def assignShortcuts (self):
         """
-        Расставить клашишные сокращения (подчеркнутые буквы) для доступа к меню (с использованием комбинаций, Alt+...)
-        Метод проходится по всем меню и расставляет подчеркивания там, где их еще нет. Заодно проверяет, чтобы у двух разных пунктов меню не было одних и тех же клавиатурных сокращений
+        Расставить клавишные сокращения (шорткаты) для доступа к меню (с использованием комбинаций, Alt+...)
+        Метод проходит по всем меню и расставляет подчеркивания там, где их еще нет.
         """
         # Проверить сокращения для заголовков меню первого уровня
         self._assignMenuShortcuts (self._menubar)
@@ -99,14 +99,16 @@ class Shortcuter (object):
                 self._assignMenuShortcuts (submenu)
 
 
-    def _getSubMenu (self, menuitem):
+    @staticmethod
+    def _getSubMenu (menuitem):
         if isinstance (menuitem, wx.MenuItem):
             return menuitem.GetSubMenu()
         elif isinstance (menuitem, wx.Menu):
             return menuitem
 
 
-    def _getMenuItems (self, menu):
+    @staticmethod
+    def _getMenuItems (menu):
         """
         Получить список подменю в зависимости от класса menu
         """
@@ -116,7 +118,8 @@ class Shortcuter (object):
             return [menu for menu, title in menu.GetMenus()]
 
 
-    def _getText (self, menuitem, position):
+    @staticmethod
+    def _getText (menuitem, position):
         """
         Получить заголовок меню (или элемента меню) в зависимости от типа menuitem
         """
@@ -127,7 +130,8 @@ class Shortcuter (object):
             return menubar.GetMenuLabel (position)
 
 
-    def _setText (self, menuitem, title, position):
+    @staticmethod
+    def _setText (menuitem, title, position):
         """
         Получить заголовок меню (или элемента меню) в зависимости от типа menuitem
         """
@@ -143,7 +147,8 @@ class Shortcuter (object):
             menubar.SetMenuLabel (position, title)
 
 
-    def _findNewShortcut (self, title, shortcuts):
+    @staticmethod
+    def _findNewShortcut (title, shortcuts):
         """
         Метод подбирает наиболее подходящее место для подчеркивания (если это возможно) и возвращает кортеж из нового заголовка меню и нового клавиатурного сокращения
         title - исходный заголовок меню
@@ -165,7 +170,8 @@ class Shortcuter (object):
         
 
 
-    def _extractShortcut (self, title):
+    @staticmethod
+    def _extractShortcut (title):
         """
         Возвращает букву, перед которой стоит знак &. Если такой буквы нет, возвращает пустую строку
         Учитывается тот факт, что строка && означает, что & надо просто показать
