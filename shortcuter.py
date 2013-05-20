@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 """
-Версия 1.0
+Версия 1.1
 """
 
 import wx
@@ -23,7 +23,7 @@ class Shortcuter (object):
         self._menubar.UpdateMenus()
 
 
-    def checkDuplicates (self):
+    def checkDuplicateShortcuts (self):
         """
         Проверить шорткаты на повторы. Возвращает список заголовков с дублирующимися шорткатами
         """

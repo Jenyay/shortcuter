@@ -88,7 +88,7 @@ class MainWindow (wx.Frame):
 
 
     def _onCheckDuplicateShortcuts (self, event):
-        duplicates = Shortcuter (self.menubar).checkDuplicates()
+        duplicates = Shortcuter (self.menubar).checkDuplicateShortcuts()
 
         if len (duplicates) == 0:
             message = u"Повторяющихся шорткатов не обнаружено"
