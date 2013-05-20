@@ -23,33 +23,37 @@ class Shortcuter (object):
         self._menubar.UpdateMenus()
 
 
-    def checkDublicates (self):
+    def checkDuplicates (self):
         """
         Проверить шорткаты на повторы. Возвращает список заголовков с дублирующимися шорткатами
         """
-        dublicates = []
+        duplicates = set()
 
-        self._checkDublicates (self._menubar, dublicates)
-        return dublicates
+        self._checkDuplicates (self._menubar, duplicates)
+        return duplicates
 
 
-    def _checkDublicates (self, menu, dublicatesList):
-        self._getExistingShortcuts (menu, lambda shortcut, title: dublicatesList.append (title))
+    def _checkDuplicates (self, menu, duplicatesList):
+        def addDuplicates (oldtitle, newtitle):
+            duplicatesList.add (oldtitle)
+            duplicatesList.add (newtitle)
+
+        self._getExistingShortcuts (menu, addDuplicates)
 
         menuitems = self._getMenuItems (menu)
 
-        for menuitem, position in zip (menuitems, range (len (menuitems))):
+        for menuitem in menuitems:
             submenu = self._getSubMenu (menuitem)
             if submenu != None:
-                self._checkDublicates (submenu, dublicatesList)
+                self._checkDuplicates (submenu, duplicatesList)
 
 
-    def _getExistingShortcuts (self, menu, dublicateFunc):
+    def _getExistingShortcuts (self, menu, duplicateFunc):
         """
         Возвращает список уже присвоенных шорткатов.
         Возвращает словарь шорткатов
         menu - меню, из которого нужно извлечь шорткаты
-        dublicateFunc - функция, которая вызывается в случае обнаружения повторяющихся шорткатов. Функция принимает два аргумента: строку с буквой-шорткатом и заголовок пункта меню, к которому этот шорткат относится.
+        duplicateFunc - функция, которая вызывается в случае обнаружения повторяющихся шорткатов. Функция принимает две строки с пунктами меню, где совпадают шорткаты.
         """
         # Ключ - буква, клавиатурного сокращения (подчеркнутая буква, буква перед которой стоит &)
         # Значение - название пункта меню.
@@ -62,7 +66,7 @@ class Shortcuter (object):
             shortcut = self._extractShortcut (title)
 
             if shortcut in shortcuts:
-                dublicateFunc (shortcuts[shortcut], title)
+                duplicateFunc (shortcuts[shortcut], title)
 
             if len (shortcut) != 0:
                 shortcuts[shortcut] = title
@@ -74,7 +78,7 @@ class Shortcuter (object):
         """
         Проверить и применить клавишные сокращения для одного меню
         """
-        def noneDublicateFunc (shortcut, title):
+        def noneDuplicateFunc (shortcut, title):
             """
             Функция, используемая в случае, если при обнаружении повторения шортката делать ничего не надо
             """
@@ -82,7 +86,7 @@ class Shortcuter (object):
 
         # Ключ - буква, клавиатурного сокращения (подчеркнутая буква, буква перед которой стоит &)
         # Значение - название пункта меню.
-        shortcuts = self._getExistingShortcuts (menu, noneDublicateFunc)
+        shortcuts = self._getExistingShortcuts (menu, noneDuplicateFunc)
 
         menuitems = self._getMenuItems (menu)
 

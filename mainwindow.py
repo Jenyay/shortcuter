@@ -21,7 +21,7 @@ class MainWindow (wx.Frame):
         self._sizer = wx.BoxSizer ()
 
         self._createMenu ()
-        self._createCheckButton ()
+        self._createCheckShortcutsButton ()
 
         self.SetSizer (self._sizer)
         self.Layout()
@@ -36,7 +36,7 @@ class MainWindow (wx.Frame):
         menu1 = wx.Menu()
         menu1.Append (wx.NewId(), u"&Бла-бла-бла 1\tCtrl+O")
         menu1.Append (wx.NewId(), u"Bla-bla-bla 2\tCtrl+P")
-        menu1.Append (wx.NewId(), u"Бла-бла-бла 3")
+        menu1.Append (wx.NewId(), u"Бла-бла-бла 3\tCtrl+F1")
         menu1.Append (wx.NewId(), u"Б&ла-бла-бла 4")
         menu1.Append (wx.NewId(), u"Бла-бла-бла 5")
         self.menubar.Append (menu1, u"Заголовок меню 1")
@@ -55,16 +55,16 @@ class MainWindow (wx.Frame):
         menu3.Append (wx.NewId(), u"Бла-бла-бла 4")
 
         submenu1 = wx.Menu ()
-        submenu1.Append (wx.NewId(), u"Подменю 1")
+        submenu1.Append (wx.NewId(), u"Подменю 1\tCtrl+F2")
         submenu1.Append (wx.NewId(), u"&Подменю 2")
         submenu1.Append (wx.NewId(), u"&Подменю 3")
-        submenu1.Append (wx.NewId(), u"&Подменю 4")
+        submenu1.Append (wx.NewId(), u"&Подменю 4\tCtrl+F2")
 
         submenu2 = wx.Menu ()
         submenu2.Append (wx.NewId(), u"&Подменю 1")
         submenu2.Append (wx.NewId(), u"П одменю 2")
         submenu2.Append (wx.NewId(), u"Подменю 3")
-        submenu2.Append (wx.NewId(), u"Подменю 4")
+        submenu2.Append (wx.NewId(), u"Подменю 4\tCtrl+F1")
         submenu1.AppendSubMenu (submenu2, u"Абырвалг")
 
         menu3.AppendSubMenu (submenu1, u"Абырвалг")
@@ -74,23 +74,25 @@ class MainWindow (wx.Frame):
         self.SetMenuBar (self.menubar)
 
 
-    def _createCheckButton (self):
+    def _createCheckShortcutsButton (self):
         """
         Добавить кнопку для проверки повторения шорткатов
         """
-        checkDublicateBtn = wx.Button (self, label = u"Проверить дубликаты шорткатов")
-        checkDublicateBtn.SetMinSize ((300, -1))
-        checkDublicateBtn.Bind (wx.EVT_BUTTON, self._onCheckDublicate)
+        checkDuplicateBtn = wx.Button (self, label = u"Проверить дубликаты шорткатов")
+        checkDuplicateBtn.SetMinSize ((300, -1))
+        checkDuplicateBtn.Bind (wx.EVT_BUTTON, self._onCheckDuplicateShortcuts)
 
-        self._sizer.Add (checkDublicateBtn)
+        self._sizer.Add (checkDuplicateBtn, 
+                flag=wx.ALL, 
+                border=4)
 
 
-    def _onCheckDublicate (self, event):
-        dublicates = Shortcuter (self.menubar).checkDublicates()
+    def _onCheckDuplicateShortcuts (self, event):
+        duplicates = Shortcuter (self.menubar).checkDuplicates()
 
-        if len (dublicates) == 0:
+        if len (duplicates) == 0:
             message = u"Повторяющихся шорткатов не обнаружено"
         else:
-            message = u"Список повторяющихся шорткатов:\n\t" + u"\n\t".join (dublicates)
+            message = u"Список повторяющихся шорткатов:\n\t" + u"\n\t".join (duplicates)
 
         wx.MessageBox (message)
