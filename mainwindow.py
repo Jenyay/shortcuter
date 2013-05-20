@@ -18,10 +18,10 @@ class MainWindow (wx.Frame):
         self.SetSize ((DEFAULT_WIDTH, DEFAULT_HEIGHT))
         self.Centre()
 
-        self._sizer = wx.BoxSizer ()
+        self._sizer = wx.BoxSizer (wx.VERTICAL)
 
         self._createMenu ()
-        self._createCheckShortcutsButton ()
+        self._createButtons ()
 
         self.SetSizer (self._sizer)
         self.Layout()
@@ -61,9 +61,9 @@ class MainWindow (wx.Frame):
         submenu1.Append (wx.NewId(), u"&Подменю 4\tCtrl+F2")
 
         submenu2 = wx.Menu ()
-        submenu2.Append (wx.NewId(), u"&Подменю 1")
+        submenu2.Append (wx.NewId(), u"П&одменю 1")
         submenu2.Append (wx.NewId(), u"П одменю 2")
-        submenu2.Append (wx.NewId(), u"Подменю 3")
+        submenu2.Append (wx.NewId(), u"П&одменю 3")
         submenu2.Append (wx.NewId(), u"Подменю 4\tCtrl+F1")
         submenu1.AppendSubMenu (submenu2, u"Абырвалг")
 
@@ -74,15 +74,26 @@ class MainWindow (wx.Frame):
         self.SetMenuBar (self.menubar)
 
 
-    def _createCheckShortcutsButton (self):
+    def _createButtons (self):
         """
-        Добавить кнопку для проверки повторения шорткатов
+        Добавить кнопку для проверки повторения шорткатов и горячих клавиш
         """
-        checkDuplicateBtn = wx.Button (self, label = u"Проверить дубликаты шорткатов")
-        checkDuplicateBtn.SetMinSize ((300, -1))
-        checkDuplicateBtn.Bind (wx.EVT_BUTTON, self._onCheckDuplicateShortcuts)
+        # Кнопка для проверки повторений шорткатов
+        checkDuplicateShotrcutsBtn = wx.Button (self, label = u"Проверить дубликаты шорткатов")
+        checkDuplicateShotrcutsBtn.SetMinSize ((300, -1))
+        checkDuplicateShotrcutsBtn.Bind (wx.EVT_BUTTON, self._onCheckDuplicateShortcuts)
 
-        self._sizer.Add (checkDuplicateBtn, 
+        self._sizer.Add (checkDuplicateShotrcutsBtn, 
+                flag=wx.ALL, 
+                border=4)
+
+
+        # Кнопка для проверки повторений горячих клавиш
+        checkDuplicateHotKeysBtn = wx.Button (self, label = u"Проверить дубликаты горячих клавиш")
+        checkDuplicateHotKeysBtn.SetMinSize ((300, -1))
+        checkDuplicateHotKeysBtn.Bind (wx.EVT_BUTTON, self._onCheckDuplicateHotKeys)
+
+        self._sizer.Add (checkDuplicateHotKeysBtn, 
                 flag=wx.ALL, 
                 border=4)
 
@@ -94,5 +105,16 @@ class MainWindow (wx.Frame):
             message = u"Повторяющихся шорткатов не обнаружено"
         else:
             message = u"Список повторяющихся шорткатов:\n\t" + u"\n\t".join (duplicates)
+
+        wx.MessageBox (message)
+
+
+    def _onCheckDuplicateHotKeys (self, event):
+        duplicates = Shortcuter (self.menubar).checkDuplacateHotKeys()
+
+        if len (duplicates) == 0:
+            message = u"Повторяющихся горячих клавиш не обнаружено"
+        else:
+            message = u"Список повторяющихся горячих клавиш:\n\t" + u"\n\t".join (duplicates)
 
         wx.MessageBox (message)

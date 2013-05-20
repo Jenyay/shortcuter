@@ -25,18 +25,60 @@ class Shortcuter (object):
 
     def checkDuplicateShortcuts (self):
         """
-        Проверить шорткаты на повторы. Возвращает список заголовков с дублирующимися шорткатами
+        Проверить шорткаты на повторы. 
+        Возвращает множество заголовков с дублирующимися шорткатами
         """
         duplicates = set()
+        self._checkDuplicatesShortcuts (self._menubar, duplicates)
+        
+        result = list (duplicates)
+        result.sort (key=lambda item: self._extractShortcut (item))
 
-        self._checkDuplicates (self._menubar, duplicates)
-        return duplicates
+        return result
 
 
-    def _checkDuplicates (self, menu, duplicatesList):
+    def checkDuplacateHotKeys (self):
+        """
+        Проверить горячие клавиши на повторы во всем меню. 
+        Возвращает множество заголовков с дублирующимися горячими клавишами
+        """
+        duplicates = set()
+        self._checkDuplicatesHotKeys (self._menubar, duplicates)
+
+        result = list (duplicates)
+        result.sort (key=lambda item: self._extractHotKey (item))
+
+        return result
+
+
+    def _checkDuplicatesHotKeys (self, menu, duplicates, hotkeysDict={}):
+        """
+        menu - меню, в котором проверяются горячие клавиши
+        duplicates - множество пунктов меню, в которых горячие клавиши совпадают
+        hotkeysDict - словарь полученных горячих клавиш. Ключ - горячая клавиша, значение - пункт меню
+        """
+        menuitems = self._getMenuItems (menu)
+
+        for menuitem, position in zip (menuitems, range (len (menuitems))):
+            title = self._getText (menuitem, position)
+            hotkey = self._extractHotKey (title)
+
+            if hotkey in hotkeysDict:
+                duplicates.add (hotkeysDict[hotkey])
+                duplicates.add (title)
+
+            if len (hotkey) != 0:
+                hotkeysDict[hotkey] = title
+
+            submenu = self._getSubMenu (menuitem)
+            if submenu != None:
+                self._checkDuplicatesHotKeys (submenu, duplicates, hotkeysDict)
+
+
+    def _checkDuplicatesShortcuts (self, menu, duplicates):
         def addDuplicates (oldtitle, newtitle):
-            duplicatesList.add (oldtitle)
-            duplicatesList.add (newtitle)
+            duplicates.add (oldtitle)
+            duplicates.add (newtitle)
 
         self._getExistingShortcuts (menu, addDuplicates)
 
@@ -45,7 +87,7 @@ class Shortcuter (object):
         for menuitem in menuitems:
             submenu = self._getSubMenu (menuitem)
             if submenu != None:
-                self._checkDuplicates (submenu, duplicatesList)
+                self._checkDuplicatesShortcuts (submenu, duplicates)
 
 
     def _getExistingShortcuts (self, menu, duplicateFunc):
@@ -194,3 +236,12 @@ class Shortcuter (object):
             return u""
         
         return cleartitle[index + 1].lower()
+
+
+    @staticmethod
+    def _extractHotKey (title):
+        """
+        Возвращает горячую клавишу для меню (то, что идет после символа табуляции)
+        """
+        substrings = title.split ("\t", 1)
+        return substrings[1] if len (substrings) == 2 else u""
