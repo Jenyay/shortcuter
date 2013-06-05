@@ -26,7 +26,7 @@ class Shortcuter (object):
     def checkDuplicateShortcuts (self):
         """
         Проверить шорткаты на повторы. 
-        Возвращает множество заголовков с дублирующимися шорткатами
+        Возвращает список заголовков с дублирующимися шорткатами
         """
         duplicates = set()
         self._checkDuplicatesShortcuts (self._menubar, duplicates)
@@ -40,7 +40,7 @@ class Shortcuter (object):
     def checkDuplacateHotKeys (self):
         """
         Проверить горячие клавиши на повторы во всем меню. 
-        Возвращает множество заголовков с дублирующимися горячими клавишами
+        Возвращает список заголовков с дублирующимися горячими клавишами
         """
         duplicates = set()
         self._checkDuplicatesHotKeys (self._menubar, duplicates)
